@@ -1,8 +1,9 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
-const bodyparser = require("body-parser");
+const http = require("http");
 const cors = require("cors");
+const { Server } = require("socket.io");
 
 const app = express();
 
@@ -10,6 +11,9 @@ const app = express();
 // const { UserSession } = require("./models/UserSession");
 // const { Auth } = require("./middleware/Auth");
 const config = require("./config/keys");
+const routes = require("./routes");
+const sockets = require("./sockets");
+const { getMarketData, CEmarketData, PEmarketData } = require("./controllers");
 
 const corsOptions = {
   origin: [
@@ -39,7 +43,12 @@ mongoose
   .then(() => console.log("Database is Connected"))
   .catch((err) => console.log(err));
 
-//app.use("/", require("./routes"));
+const httpServer = http.createServer(app);
+const io = new Server(httpServer, {
+  cors: {
+    origin: corsOptions.origin,
+  },
+});
 
 var allowCrossDomain = function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -57,6 +66,8 @@ var allowCrossDomain = function (req, res, next) {
 
 app.use(allowCrossDomain);
 
+app.use("/", routes);
+
 if (process.env.NODE_ENV === "production") {
   // Set Static Folder
   app.use(express.static("client/build"));
@@ -67,5 +78,16 @@ if (process.env.NODE_ENV === "production") {
 }
 
 const port = process.env.PORT || 5000;
+
+io.on("connection", (socket) => {
+  //   socket.on("send-market-data", marketDataController.sendData);
+  socket.on("token", async (token) => {
+    await getMarketData(token, socket);
+    await CEmarketData(token, socket);
+    await PEmarketData(token, socket);
+  });
+});
+
+io.listen(5050);
 
 app.listen(port, () => console.log(`Server Started on ${port}`));
