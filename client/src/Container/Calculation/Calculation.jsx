@@ -1,8 +1,8 @@
 import React from "react";
 
-const Calculation = ({ value, CE, PE, changeCE, changePE }) => {
-  let x = 0.0125;
-  let y = 0.011;
+const Calculation = ({ value, CE, PE, changeCE, changePE, xValue, yValue }) => {
+  let x = xValue || 0.0125;
+  let y = yValue || 0.011;
 
   let a = CE || "USDINR22O0782.25CE",
     b = PE || "USDINR22O0782PE",
@@ -39,7 +39,7 @@ const Calculation = ({ value, CE, PE, changeCE, changePE }) => {
 
       changeCE(p);
       changePE(q);
-      z = x + y;
+      z = xValue + yValue;
     }
   }
 
@@ -53,7 +53,7 @@ const Calculation = ({ value, CE, PE, changeCE, changePE }) => {
 
         <div className="flex-1 text-cyan-900 text-right">
           <div className="uppercase text-xs ">{a}</div>
-          <div className="text-2xl">= {x} </div>
+          <div className="text-2xl">= {xValue || x} </div>
         </div>
       </div>
 
@@ -65,7 +65,7 @@ const Calculation = ({ value, CE, PE, changeCE, changePE }) => {
 
         <div className="flex-1 text-cyan-900 text-right">
           <div className="uppercase text-xs ">{b}</div>
-          <div className="text-2xl">= {y} </div>
+          <div className="text-2xl">= {yValue || x} </div>
         </div>
       </div>
 

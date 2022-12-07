@@ -7,7 +7,7 @@ import Trigger from "../Container/Trigger/Trigger";
 import { connect } from "../services/connector";
 
 import openSocket from "socket.io-client";
-const socket = openSocket("http://localhost:5050");
+const socket = openSocket("http://localhost:5001");
 
 const Algo = () => {
   const [LTP, setLTP] = useState("");
@@ -17,6 +17,7 @@ const Algo = () => {
   const [PEValue, setPEValue] = useState("");
   const [date, setDate] = useState("");
   const [lowestPrice, setLowestPrice] = useState(0);
+  const [XYValue, setXYValue] = useState({ x: 0, y: 0 });
 
   const [searchParams, setSearchParams] = useSearchParams();
   let navigate = useNavigate();
@@ -28,6 +29,16 @@ const Algo = () => {
       "lowest_price",
       JSON.parse(data)?.d["7208"][0]?.v?.low_price
     );
+  });
+
+  socket.on("CE-data-from-server", (data) => {
+    console.log(data);
+    setXYValue({ ...XYValue, x: JSON.parse(data)?.d["7208"][0].v.low_price });
+  });
+
+  socket.on("PE-data-from-server", (data) => {
+    console.log(data);
+    setXYValue({ ...XYValue, y: JSON.parse(data)?.d["7208"][0].v.low_price });
   });
 
   const getAccessToken = async () => {
@@ -75,6 +86,22 @@ const Algo = () => {
   useEffect(() => {
     setCE(`USDINR${date + CEValue}CE`);
     setPE(`USDINR${date + PEValue}PE`);
+
+    let token = JSON.parse(localStorage.getItem("token")).token;
+
+    let CEdata = {
+      CEsymbol: `USDINR${date + CEValue}CE`,
+      token: token,
+    };
+
+    let PEdata = {
+      PEsymbol: `USDINR${date + PEValue}PE`,
+      token: token,
+    };
+
+    socket.emit("ce-symbol", CEdata);
+
+    socket.emit("pe-symbol", PEdata);
   }, [date, CEValue, PEValue, LTP]);
 
   return (
@@ -90,6 +117,8 @@ const Algo = () => {
               changePE={changePE}
               PE={PE}
               CE={CE}
+              xValue={XYValue.x}
+              yValue={XYValue.y}
             />
           </div>
           <div className="bg-white mt-4 rounded-2xl">

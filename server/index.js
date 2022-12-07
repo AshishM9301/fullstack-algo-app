@@ -5,6 +5,9 @@ const http = require("http");
 const cors = require("cors");
 const { Server } = require("socket.io");
 
+const dotenv = require("dotenv");
+dotenv.config();
+
 const app = express();
 
 // const { User } = require("./models/Users");
@@ -25,6 +28,7 @@ const corsOptions = {
     "http://127.0.0.1:3001",
     "http://127.0.0.1:8000",
     "http://127.0.0.1:8003/",
+    "https://algo.onrender.com",
   ],
   credentials: true,
   optionsSuccessStatus: 200,
@@ -47,6 +51,7 @@ const httpServer = http.createServer(app);
 const io = new Server(httpServer, {
   cors: {
     origin: corsOptions.origin,
+    credentials: true,
   },
 });
 
@@ -77,17 +82,23 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
-const port = process.env.PORT || 5000;
+const port = process.env.HTTP_PORT;
 
 io.on("connection", (socket) => {
-  //   socket.on("send-market-data", marketDataController.sendData);
   socket.on("token", async (token) => {
     await getMarketData(token, socket);
-    await CEmarketData(token, socket);
-    await PEmarketData(token, socket);
+  });
+
+  socket.on("ce-symbol", async (data) => {
+    console.log(data);
+    await CEmarketData(data, socket);
+  });
+
+  socket.on("pe-symbol", async (data) => {
+    await PEmarketData(data, socket);
   });
 });
 
-io.listen(5050);
+io.listen(process.env.SOCKET_PORT);
 
 app.listen(port, () => console.log(`Server Started on ${port}`));
