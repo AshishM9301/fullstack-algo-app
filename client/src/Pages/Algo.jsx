@@ -4,10 +4,15 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import Calculation from "../Container/Calculation/Calculation";
 import Main from "../Container/Main/Main";
 import Trigger from "../Container/Trigger/Trigger";
-import { connect } from "../services/connector";
+import { connect, socket } from "../services/connector";
 
-import openSocket from "socket.io-client";
-const socket = openSocket("http://localhost:5001");
+import { useDispatch, useSelector } from "react-redux";
+import { loadUser } from "../_actions/_authActions";
+import {
+  FUTMarketData,
+  getFutMarketData,
+  loadInitialDataSocket,
+} from "../_actions/_orderActions";
 
 const Algo = () => {
   const [LTP, setLTP] = useState("");
@@ -20,26 +25,13 @@ const Algo = () => {
   const [XYValue, setXYValue] = useState({ x: 0, y: 0 });
 
   const [searchParams, setSearchParams] = useSearchParams();
+
+  const dispatch = useDispatch();
+
+  const token = useSelector((state) => state.auth.token);
+  const order = useSelector((state) => state.order);
+
   let navigate = useNavigate();
-
-  socket.on("data-from-server", (data) => {
-    console.log(JSON.parse(data), JSON.parse(data)?.d["7208"][0].v.low_price);
-    setLowestPrice(JSON.parse(data)?.d["7208"][0]?.v?.low_price);
-    localStorage.setItem(
-      "lowest_price",
-      JSON.parse(data)?.d["7208"][0]?.v?.low_price
-    );
-  });
-
-  socket.on("CE-data-from-server", (data) => {
-    console.log(data);
-    setXYValue({ ...XYValue, x: JSON.parse(data)?.d["7208"][0].v.low_price });
-  });
-
-  socket.on("PE-data-from-server", (data) => {
-    console.log(data);
-    setXYValue({ ...XYValue, y: JSON.parse(data)?.d["7208"][0].v.low_price });
-  });
 
   const getAccessToken = async () => {
     const s = searchParams.get("s");
@@ -48,22 +40,15 @@ const Algo = () => {
       authCode = searchParams.get("auth_code");
     }
 
-    const res = await connect(
-      `/redirect?s=ok&auth_code=${authCode}`,
-      "GET",
-      null,
-      null
-    );
+    dispatch(loadUser({ authCode }));
 
-    if (res.success) {
-      console.log(res, "Response");
-      socket.emit("token", res.token);
-      localStorage.setItem("token", JSON.stringify(res));
-    }
+    // console.log(order);
   };
 
   useEffect(() => {
     getAccessToken();
+
+    dispatch(loadInitialDataSocket(socket));
   }, []);
 
   const changeLTP = (ltp) => {
@@ -80,55 +65,42 @@ const Algo = () => {
 
   const changeDate = (d) => {
     console.log(d);
-    setDate(`${d[0] + d[1].split("")[0] + d[2]}`);
   };
 
-  useEffect(() => {
-    setCE(`USDINR${date + CEValue}CE`);
-    setPE(`USDINR${date + PEValue}PE`);
+  useEffect(() => {}, [date, CEValue, PEValue, LTP]);
 
-    let token = JSON.parse(localStorage.getItem("token")).token;
+  // useEffect(() => {
+  //   setCE(`USDINR${date + CEValue}CE`);
+  //   setPE(`USDINR${date + PEValue}PE`);
 
-    let CEdata = {
-      CEsymbol: `USDINR${date + CEValue}CE`,
-      token: token,
-    };
+  //   let token = localStorage.getItem("token");
 
-    let PEdata = {
-      PEsymbol: `USDINR${date + PEValue}PE`,
-      token: token,
-    };
+  //   let CEdata = {
+  //     CEsymbol: `USDINR${date + CEValue}CE`,
+  //     token: token,
+  //   };
 
-    socket.emit("ce-symbol", CEdata);
+  //   let PEdata = {
+  //     PEsymbol: `USDINR${date + PEValue}PE`,
+  //     token: token,
+  //   };
 
-    socket.emit("pe-symbol", PEdata);
-  }, [date, CEValue, PEValue, LTP]);
+  //   socket.emit("ce-symbol", CEdata);
+
+  //   socket.emit("pe-symbol", PEdata);
+  // }, [date, CEValue, PEValue, LTP]);
 
   return (
     <div>
       <div className="bg-slate-300 min-h-screen flex flex-col justify-center items-center w-screen flex-1 shadow-lg border-2 rounded-b-2xl ">
-        <div>Lowest price : {lowestPrice}</div>
+        <div>Lowest price : {order?.FUT_MarketData}</div>
         <div className="w-1/6 mx-auto">
           <div className="shadow-lg rounded-b-2xl">
-            <Main ltp={changeLTP} />
-            <Calculation
-              value={LTP}
-              changeCE={changeCE}
-              changePE={changePE}
-              PE={PE}
-              CE={CE}
-              xValue={XYValue.x}
-              yValue={XYValue.y}
-            />
+            <Main />
+            <Calculation xValue={XYValue.x} yValue={XYValue.y} />
           </div>
           <div className="bg-white mt-4 rounded-2xl">
-            <Trigger
-              changeCE={changeCE}
-              changePE={changePE}
-              PE={PE}
-              CE={CE}
-              changeDate={changeDate}
-            />
+            <Trigger changeCE={changeCE} changePE={changePE} PE={PE} CE={CE} />
           </div>
         </div>
       </div>

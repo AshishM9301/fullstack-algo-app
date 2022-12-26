@@ -1,4 +1,5 @@
 const fyers = require("fyers-api-v2");
+const { checkCEData } = require("../../middleware/checkCEData/checkCEData");
 
 const Cred = require("../../config/keys").flyers;
 
@@ -7,7 +8,7 @@ const CEmarketData = async (data, socket) => {
     let CEsymbol = data.CEsymbol;
 
     const body = {
-      symbol: [CEsymbol],
+      symbol: [`NSE:${CEsymbol}`],
 
       dataType: "symbolUpdate",
     };
@@ -19,15 +20,16 @@ const CEmarketData = async (data, socket) => {
     fyers.setAccessToken(data.token);
 
     // let quotes = new fyers.quotes();
-    // let result = await quotes.setSymbol("NSE:USDINR22DECFUT").getQuotes();
-    // console.log(result);
+    // let result = await quotes.setSymbol("NSE:USDINR22D1683.25CE").getQuotes();
+    // console.log(result, "ONce called data");
 
     // return result;
 
     // res.status(200).json(result);
 
-    fyers.fyers_connect(body, function (data) {
-      socket.emit("CE-data-from-server", data);
+    fyers.fyers_connect(body, function (d) {
+      checkCEData(d);
+      socket.emit("CE-data-from-server", d);
     });
   } catch (err) {
     console.log(err);

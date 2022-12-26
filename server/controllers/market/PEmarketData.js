@@ -1,4 +1,5 @@
 const fyers = require("fyers-api-v2");
+const { checkPEData } = require("../../middleware/checkCEData/checkCEData");
 
 const Cred = require("../../config/keys").flyers;
 
@@ -7,7 +8,7 @@ const PEmarketData = async (data, socket) => {
     let PEsymbol = data.PEsymbol;
 
     const body = {
-      symbol: [PEsymbol],
+      symbol: [`NSE:${PEsymbol}`],
 
       dataType: "symbolUpdate",
     };
@@ -26,8 +27,9 @@ const PEmarketData = async (data, socket) => {
 
     // res.status(200).json(result);
 
-    fyers.fyers_connect(body, function (data) {
-      socket.emit("PE-data-from-server", data);
+    fyers.fyers_connect(body, function (d) {
+      checkPEData(d);
+      socket.emit("PE-data-from-server", d);
     });
   } catch (err) {
     console.log(err);

@@ -1,5 +1,6 @@
 const fyers = require("fyers-api-v2");
-
+const dayjs = require("dayjs");
+const Market = require("../../models/MarketData");
 const Cred = require("../../config/keys").flyers;
 
 const getMarketData = async (token, socket) => {
@@ -27,6 +28,18 @@ const getMarketData = async (token, socket) => {
     fyers.fyers_connect(body, function (data) {
       socket.emit("data-from-server", data);
     });
+
+    const date = dayjs(Date.now()).format("DD-MMM-YY");
+
+    await Market.findOneAndUpdate(
+      {
+        date,
+      },
+      {
+        token: token,
+      },
+      { upsert: true, new: true }
+    );
   } catch (err) {
     console.log(err);
   }

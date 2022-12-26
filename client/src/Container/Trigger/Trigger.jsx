@@ -3,9 +3,18 @@ import { useState } from "react";
 import dayjs from "dayjs";
 import Button from "../../Components/Button/Button";
 import { connect } from "../../services/connector";
+import { useDispatch, useSelector } from "react-redux";
+import { changeDate } from "../../_actions/_orderActions";
 
-const Trigger = ({ changeDate, CE, PE }) => {
-  const [date, setDate] = useState("2022-11-10");
+const Trigger = () => {
+  const dispatch = useDispatch();
+
+  const CE = useSelector((state) => state.order.CE);
+  const CE_Symbol = useSelector((state) => state.order.CE_Symbol);
+  const PE = useSelector((state) => state.order.PE);
+  const PE_Symbol = useSelector((state) => state.order.PE_Symbol);
+
+  const [date, setDate] = useState(dayjs(Date.now()).format("YY-MMM-DD"));
   const [qty, setQTY] = useState(0);
   const [limitPrice, setLimitPrice] = useState(0);
 
@@ -13,16 +22,15 @@ const Trigger = ({ changeDate, CE, PE }) => {
   const [errMessage, setErrMessage] = useState("");
 
   const handleAlgoInitiation = async () => {
+    console.log("Hello");
     let body = {
-      CE,
-      PE,
-      limitPrice,
+      trigger: limitPrice,
       qty,
+      CESymbol: CE_Symbol,
+      PESymbol: PE_Symbol,
     };
 
-    let token = JSON.parse(localStorage.getItem("token")).token;
-
-    const res = await connect("/order", "POST", JSON.stringify(body), token);
+    const res = await connect("/market", "POST", JSON.stringify(body), null);
 
     console.log(res);
   };
@@ -55,14 +63,7 @@ const Trigger = ({ changeDate, CE, PE }) => {
             type="number"
             value={limitPrice}
             onChange={(e) => {
-              if (e.target.value < lowest_price) {
-                console.log("err");
-                setLimitPrice(e.target.value);
-                setErrMessage(`Enter Limit Price more than ${lowest_price}`);
-              } else {
-                setLimitPrice(e.target.value);
-                setErrMessage("");
-              }
+              setLimitPrice(e.target.value);
             }}
           />
         </div>
@@ -77,7 +78,7 @@ const Trigger = ({ changeDate, CE, PE }) => {
             value={date}
             onChange={(e) => {
               setDate(e.target.value);
-              changeDate(dayjs(e.target.value).format("YY-MMM-DD").split("-"));
+              dispatch(changeDate(dayjs(e.target.value).format("YY-MMM-DD")));
             }}
           />
         </div>

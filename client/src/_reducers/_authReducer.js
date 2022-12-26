@@ -1,3 +1,4 @@
+import { socket } from "../services/connector";
 import {
   USER_LOADED,
   USER_LOADING,
@@ -5,12 +6,13 @@ import {
   LOGIN_SUCCESS,
   LOGIN_FAIL,
   LOGOUT_SUCCESS,
-  REGISTER_SUCCESS,
-  REGISTER_FAIL,
-} from "../actions/types";
+  LINK_LOGIN_SUCCESS,
+  LINK_LOGIN_FAIL,
+} from "../_actions/types";
 
 const initialState = {
   token: localStorage.getItem("token"),
+  link: "",
   isAuthenticated: false,
   isLoading: false,
   user: null,
@@ -31,9 +33,17 @@ export default function (state = initialState, action) {
         isLoading: false,
         user: action.payload,
       };
+
+    case LINK_LOGIN_SUCCESS:
+      return {
+        ...state,
+        ...action.payload,
+        link: action.payload.link,
+      };
+
     case LOGIN_SUCCESS:
-    case REGISTER_SUCCESS:
       localStorage.setItem("token", action.payload.token);
+      //socket.emit("token", action.payload.token);
       return {
         ...state,
         ...action.payload,
@@ -42,8 +52,8 @@ export default function (state = initialState, action) {
       };
     case AUTH_ERROR:
     case LOGIN_FAIL:
+    case LINK_LOGIN_FAIL:
     case LOGOUT_SUCCESS:
-    case REGISTER_FAIL:
       localStorage.removeItem("token");
       return {
         ...state,

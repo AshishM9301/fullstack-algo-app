@@ -1,72 +1,58 @@
 import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import Button from "../../Components/Button/Button";
+import {
+  changeCEValue,
+  changePEValue,
+  getCE_PE_Data,
+} from "../../_actions/_orderActions";
 
-const Calculation = ({ value, CE, PE, changeCE, changePE, xValue, yValue }) => {
-  let x = xValue || 0.0125;
-  let y = yValue || 0.011;
+const Calculation = () => {
+  const dispatch = useDispatch();
 
-  let a = CE || "USDINR22O0782.25CE",
-    b = PE || "USDINR22O0782PE",
-    p,
-    q,
-    z;
+  const LTP = useSelector((state) => state.order.LTP);
+  const CE = useSelector((state) => state.order.CE);
+  const CE_Symbol = useSelector((state) => state.order.CE_Symbol);
+  const PE = useSelector((state) => state.order.PE);
+  const PE_Symbol = useSelector((state) => state.order.PE_Symbol);
+  const xValue = useSelector((state) => state.order.CE_MarketData);
+  const yValue = useSelector((state) => state.order.PE_MarketData);
 
-  function closest(arr, val) {
-    return Math.max.apply(
-      null,
-      arr.filter(function (v) {
-        return v <= val;
-      })
-    );
-  }
-  if (value) {
-    let newValueArr = value.toString().split(".");
-
-    let newValue = parseInt(newValueArr[1]);
-
-    if (newValueArr[1] < 10) {
-      newValue = newValueArr[1] * 10;
-    }
-
-    let arrRange = [0, 25, 50, 75, 100];
-
-    let no = closest(arrRange, newValue);
-
-    if (no < newValue) {
-      x = no / 100 + 0.25;
-      y = no / 100;
-      p = x + parseInt(newValueArr[0]);
-      q = y + parseInt(newValueArr[0]);
-
-      changeCE(p);
-      changePE(q);
-      z = xValue + yValue;
-    }
-  }
+  let z = xValue + yValue;
 
   return (
     <div className="bg-white w-full rounded-b-2xl">
       <div className="flex py-4 px-6">
         <div className="flex-1 text-cyan-900 pr-6 text-left">
           <div className="uppercase text-xs ">Upper Bracket</div>
-          <div className="text-2xl">{p} CE</div>
+          <div className="text-2xl">{CE} CE</div>
         </div>
 
         <div className="flex-1 text-cyan-900 text-right">
-          <div className="uppercase text-xs ">{a}</div>
-          <div className="text-2xl">= {xValue || x} </div>
+          <div className="uppercase text-xs ">{CE_Symbol}</div>
+          <div className="text-2xl">= {xValue || 0} </div>
         </div>
       </div>
 
       <div className="flex py-4 px-6">
         <div className="flex-1 text-cyan-900 pr-6 text-left">
           <div className="uppercase text-xs ">Upper Bracket</div>
-          <div className="text-2xl">{q} PE</div>
+          <div className="text-2xl">{PE} PE</div>
         </div>
 
         <div className="flex-1 text-cyan-900 text-right">
-          <div className="uppercase text-xs ">{b}</div>
-          <div className="text-2xl">= {yValue || x} </div>
+          <div className="uppercase text-xs ">{PE_Symbol}</div>
+          <div className="text-2xl">= {yValue || 0} </div>
         </div>
+      </div>
+
+      <div className="flex justify-center items-center my-4">
+        <Button
+          title="GET CE & PE Market Data"
+          onClick={(e) => {
+            dispatch(getCE_PE_Data());
+          }}
+        />
       </div>
 
       <div className="flex py-4 px-6 pb-5 bg-gray-200 rounded-b-2xl">

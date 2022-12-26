@@ -1,6 +1,10 @@
 import React from "react";
+import { useDispatch } from "react-redux";
+import { changeLTPValue } from "../../_actions/_orderActions";
 
-const Main = ({ ltp }) => {
+const Main = () => {
+  const dispatch = useDispatch();
+
   return (
     <div className="flex justify-between bg-cyan-700 rounded-t-2xl px-6 py-4 items-center">
       <div className=" pr-4">
@@ -12,7 +16,7 @@ const Main = ({ ltp }) => {
         <input
           className="text-2xl border outline-none text-gray-900 "
           onChange={(e) => {
-            ltp(e.target.value);
+            dispatch(changeLTPValue(e.target.value));
           }}
         />
         <div className="text-sm text-zinc-300">LTP</div>
