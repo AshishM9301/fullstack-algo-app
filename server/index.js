@@ -71,7 +71,7 @@ var allowCrossDomain = function (req, res, next) {
 
 app.use(allowCrossDomain);
 
-app.use("/", routes);
+app.use(routes);
 
 if (process.env.NODE_ENV === "production") {
   // Set Static Folder
