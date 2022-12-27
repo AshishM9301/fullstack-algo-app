@@ -1,6 +1,6 @@
 import openSocket from "socket.io-client";
 
-const baseUrl = "http://127.0.0.1:5002/api";
+const baseUrl = "http://localhost:5002/api" || "http://64.227.140.192/api";
 
 export const connect = async (url, method, body, token) => {
   const response = await fetch(`${baseUrl}/${url}`, {
@@ -20,4 +20,6 @@ export const connect = async (url, method, body, token) => {
   return response.json();
 };
 
-export const socket = openSocket("http://localhost:5001");
+export const socket = openSocket(
+  "http://localhost:5001" || "http://64.227.140.192:5000"
+);
