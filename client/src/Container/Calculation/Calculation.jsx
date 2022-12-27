@@ -2,15 +2,15 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Button from "../../Components/Button/Button";
 import {
-  changeCEValue,
-  changePEValue,
+  // changeCEValue,
+  // changePEValue,
   getCE_PE_Data,
 } from "../../_actions/_orderActions";
 
 const Calculation = () => {
   const dispatch = useDispatch();
 
-  const LTP = useSelector((state) => state.order.LTP);
+  /// const LTP = useSelector((state) => state.order.LTP);
   const CE = useSelector((state) => state.order.CE);
   const CE_Symbol = useSelector((state) => state.order.CE_Symbol);
   const PE = useSelector((state) => state.order.PE);

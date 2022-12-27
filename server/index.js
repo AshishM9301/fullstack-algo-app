@@ -17,6 +17,7 @@ const config = require("./config/keys");
 const routes = require("./routes");
 const sockets = require("./sockets");
 const { getMarketData, CEmarketData, PEmarketData } = require("./controllers");
+const path = require("path");
 
 const corsOptions = {
   origin: [

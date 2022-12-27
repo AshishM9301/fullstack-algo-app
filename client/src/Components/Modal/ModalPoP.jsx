@@ -1,10 +1,10 @@
 import React from "react";
-import { useState } from "react";
-import { useEffect } from "react";
+// import { useState } from "react";
+// import { useEffect } from "react";
 import Modal from "react-modal";
 
 const ModalPoP = ({ modalIsOpen, closeModal, link }) => {
-  const [html, setHtml] = useState(null);
+  // const [html, setHtml] = useState(null);
   const customStyles = {
     content: {
       top: "50%",
@@ -24,7 +24,11 @@ const ModalPoP = ({ modalIsOpen, closeModal, link }) => {
         style={customStyles}
         contentLabel="Example Modal"
       >
-        <iframe src={link} style={{ width: "500px", height: "500px" }} />
+        <iframe
+          src={link}
+          title="Link"
+          style={{ width: "500px", height: "500px" }}
+        />
       </Modal>
     </div>
   );

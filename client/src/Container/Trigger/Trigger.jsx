@@ -9,16 +9,16 @@ import { changeDate } from "../../_actions/_orderActions";
 const Trigger = () => {
   const dispatch = useDispatch();
 
-  const CE = useSelector((state) => state.order.CE);
+  // const CE = useSelector((state) => state.order.CE);
   const CE_Symbol = useSelector((state) => state.order.CE_Symbol);
-  const PE = useSelector((state) => state.order.PE);
+  // const PE = useSelector((state) => state.order.PE);
   const PE_Symbol = useSelector((state) => state.order.PE_Symbol);
 
   const [date, setDate] = useState(dayjs(Date.now()).format("YY-MMM-DD"));
   const [qty, setQTY] = useState(0);
   const [limitPrice, setLimitPrice] = useState(0);
 
-  const [lowest_price] = useState(localStorage.getItem("lowest_price"));
+  // const [lowest_price] = useState(localStorage.getItem("lowest_price"));
   const [errMessage, setErrMessage] = useState("");
 
   const handleAlgoInitiation = async () => {

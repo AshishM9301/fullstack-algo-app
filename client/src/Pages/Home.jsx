@@ -1,12 +1,12 @@
-import React, { useState } from "react";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+//  import { useNavigate } from "react-router-dom";
 import Button from "../Components/Button/Button";
-import ModalPoP from "../Components/Modal/ModalPoP";
-import { connect } from "../services/connector";
+// import ModalPoP from "../Components/Modal/ModalPoP";
+// import { connect } from "../services/connector";
 import { login } from "../_actions/_authActions";
 const Home = () => {
-  const [showModalPopup, setShowModalPopup] = useState(false);
+  //  const [showModalPopup, setShowModalPopup] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -14,7 +14,7 @@ const Home = () => {
 
   const handleLogin = async () => {
     dispatch(login());
-    setShowModalPopup(true);
+    // setShowModalPopup(true);
   };
 
   return (

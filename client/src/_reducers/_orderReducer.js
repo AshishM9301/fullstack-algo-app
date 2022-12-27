@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import { socket } from "../services/connector";
+// import { socket } from "../services/connector";
 import {
   CE_SYMBOL,
   CE_VALUE,

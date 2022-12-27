@@ -1,4 +1,4 @@
-import { connect, socket } from "../services/connector";
+import { connect } from "../services/connector";
 import {
   LINK_LOGIN_FAIL,
   LINK_LOGIN_SUCCESS,

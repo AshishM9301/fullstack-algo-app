@@ -1,15 +1,15 @@
 import React from "react";
-import { Outlet } from "react-router-dom";
-import Button from "./Components/Button/Button";
+// import { Outlet } from "react-router-dom";
+// import Button from "./Components/Button/Button";
 import Navbar from "./Components/Navbar/Navbar";
 import Home from "./Pages/Home";
 import { io } from "socket.io-client";
 const socket = io("http://localhost:5001");
 const App = () => {
-  function sendSocketIO() {
-    console.log("running");
-    socket.emit("message", "msg send");
-  }
+  // function sendSocketIO() {
+  //   console.log("running");
+  //   socket.emit("message", "msg send");
+  // }
 
   socket.on("message_1", (msg) => {
     // revert to classic upgrade
