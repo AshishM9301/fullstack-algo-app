@@ -4,7 +4,7 @@ import React from "react";
 import Navbar from "./Components/Navbar/Navbar";
 import Home from "./Pages/Home";
 import { io } from "socket.io-client";
-const socket = io("http://localhost:5001");
+const socket = io("http://64.227.140.192:5000");
 const App = () => {
   // function sendSocketIO() {
   //   console.log("running");
