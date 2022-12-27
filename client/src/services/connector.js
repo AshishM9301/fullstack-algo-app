@@ -3,7 +3,7 @@ import openSocket from "socket.io-client";
 const baseUrl = "http://64.227.140.192/api";
 
 export const connect = async (url, method, body, token) => {
-  const response = await fetch(`${baseUrl}/${url}`, {
+  const response = await fetch(`${baseUrl}${url}`, {
     method: method,
     mode: "cors",
     cache: "no-cache",
