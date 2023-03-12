@@ -30,6 +30,9 @@ const corsOptions = {
     "http://127.0.0.1:8000",
     "http://127.0.0.1:8003/",
     "https://algo.onrender.com",
+    "http://159.89.160.226:3000/",
+    "https://159.89.160.226:3000",
+    "http://159.89.160.226:3000"
   ],
   credentials: true,
   optionsSuccessStatus: 200,
